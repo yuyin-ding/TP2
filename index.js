@@ -290,14 +290,41 @@ var sendPage = function (reponse, page) {
 //       MODIFIER EST CI-DESSOUS
 // -------------------------------------
 
-// TODO : compléter cette fonction
 var substituerEtiquette = function (texte, etiquette, valeur) {
-    
-};
+    if(etiquette.charAt(2) == "{") {
+        var txt = texte.replace(etiquette,valeur);
+    } else {
+        valeur = entities.encode(valeur);
+        var txt = texte.replace(etiquette,valeur);
+    };
+    return txt;
+    };
+console.log(substituerEtiquette("L’inégalité {{eq}} est fausse", "{{eq}}", "3 > 5"));
+console.log(substituerEtiquette("<p>Mon nom est {{{nom}}}</p>","{{{nom}}}","<em>Marguerite</em>"));
 
-// TODO : compléter cette fonction
 var getIndex = function () {
-    return 'TODO : completer getIndex()';
+    //lire le contenu du fichier 
+    var texte = readFile("template/index.html");
+    //prendre le tableau qui a vingt titles du page au hasard
+    var articleRecents = getRandomPageTitles(20);
+    //creer un tableau pour ajouter les code html: <ul>
+    var valeurArticles = ["<ul>"];
+    //pour chaque article obtenue
+    articleRecents.forEach(function(x) {
+        /*ajouter dans tableau "valeurArticles" en forme de 
+        <li><a href="/article/titire">titre</a></li>*/
+        valeurArticles.push("<li><a href=\"/article/"+x+"\">"+x+"</a></li>");
+    });
+    valeurArticles.push("</ul>");//ajouter </ul> a la fin
+    valeurArticles = valeurArticles.join("");//rejoindre la tableau au String
+    var valeurImg = getImage();//prendre l'URL d'une image au hasard
+    /*appeler la fonction "substituerEtiquette" pour substituer l'etiquette
+     "{{{articles-recents}}}"*/
+    texte = substituerEtiquette(texte,"{{{articles-recents}}}",valeurArticles);
+    /*appeler la fonction "substituerEtiquette" pour substituer l'etiquette
+     {{img}}"*/
+    texte = substituerEtiquette(texte,"{{img}}",valeurImg);
+    return texte;
 };
 
 // TODO
